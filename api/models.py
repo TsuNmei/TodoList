@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
+from revauth.models import BaseProfile
 
 
 class UserProfile(models.Model):
@@ -11,11 +12,26 @@ class UserProfile(models.Model):
         return f'<{self.user}> {self.name}'
 
 
+# class UserProfile(BaseProfile):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+#     name = models.CharField(max_length=32)
+
+
 class Category(models.Model):
+    """
+    COLOR = (
+        ('BLACK', 'BLACK'),
+        ('DARK', 'DARK'),
+        ('RED', 'RED'),
+        ('BLUE', 'BLUE'),
+        ('GREEN', 'GREEN'),
+    )
+    """
     creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=32)
-    color = models.CharField(max_length=32)
-
+    color = models.CharfField(max_length=32)
+    # color = models.CharField(max_length=32, default='RED', choices=COLOR)
+    
     def __str__(self):
         return f"{self.creator} -{self.title}"
 
