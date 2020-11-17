@@ -1,6 +1,5 @@
 django
 djangorestframework
-django
+django-rest-framework-redocs
 revauth
 revcore
-datatime
