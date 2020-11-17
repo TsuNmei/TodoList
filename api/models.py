@@ -1,55 +1,55 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
+from revauth.models import BaseProfile
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, blank=True)
-    email = models.EmailField(max_length=64, blank=True)
-    avatar = models.URLField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    data = models.TextField(blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    name = models.CharField(max_length=32)
 
     def __str__(self):
-        return self.name
+        return f'<{self.user}> {self.name}'
+
+
+# class UserProfile(BaseProfile):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+#     name = models.CharField(max_length=32)
 
 
 class Category(models.Model):
     COLOR = (
-        ('RED', 'red'),
-        ('BLUE', 'blue'),
-        ('GREEN', 'green'),
-        ('YELLOW', 'yellow'),
-        ('ORANGE', 'orange'),
-        ('PURPLE', 'purple'),
-        ('BLACK', 'black'),
-        ('WHITE', 'white')
+        ('BLACK', 'BLACK'),
+        ('DARK', 'DARK'),
+        ('RED', 'RED'),
+        ('BLUE', 'BLUE'),
+        ('GREEN', 'GREEN'),
     )
+
+    creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=32)
-    color = models.CharField(max_length=32, default='red', choices=COLOR)
+    color = models.CharField(max_length=32, default='RED', choices=COLOR)
 
     def __str__(self):
-        return self.title
+        return f"{self.creator} -{self.title}"
 
 
 class Item(models.Model):
     PRIORITY_LEVEL = (
-        ('HIGH', 'high'),
-        ('MEDIUM', 'medium'),
-        ('LOW', 'low')
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3')
     )
-    creator = models.ForeignKey(UserProfile, related_name='items', on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, related_name='categories', on_delete=models.CASCADE)
+    creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='items')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='categories')
     title = models.CharField(max_length=32)
     description = models.TextField(max_length=64, blank=True)
-    priority = models.CharField(max_length=32, default='medium', choices=PRIORITY_LEVEL)
+    priority = models.CharField(max_length=32, default='2', choices=PRIORITY_LEVEL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'<{self.creator}> {self.title}'
+        return f'<ID:{self.pk}> {self.title}'
 
 
 admin.site.register(UserProfile)
