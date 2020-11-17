@@ -18,6 +18,7 @@ class UserProfile(models.Model):
 
 
 class Category(models.Model):
+    """
     COLOR = (
         ('BLACK', 'BLACK'),
         ('DARK', 'DARK'),
@@ -25,11 +26,12 @@ class Category(models.Model):
         ('BLUE', 'BLUE'),
         ('GREEN', 'GREEN'),
     )
-
+    """
     creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=32)
-    color = models.CharField(max_length=32, default='RED', choices=COLOR)
-
+    color = models.CharfField(max_length=32)
+    # color = models.CharField(max_length=32, default='RED', choices=COLOR)
+    
     def __str__(self):
         return f"{self.creator} -{self.title}"
 
