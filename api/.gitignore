@@ -1,0 +1,12 @@
+.env
+.idea
+.mypy_cache
+.DS_Store
+*.sqlite3
+media/
+*.pyc
+*.db
+*.pid
+__pycache__
+*.py[cod]
+*$py.classd
