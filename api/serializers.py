@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import *
+from api.models import UserProfile, Category, Item
 from django.contrib.auth.admin import User
 
 
@@ -14,12 +14,10 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
 
 
-# class ProfileSerializer(serializers.ModelSerializer):
-#     user = UserSerializer(read_only=True)
-#
-#     class Meta:
-#         model = UserProfile
-#         fields = serializers.ALL_FIELDS
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = serializers.ALL_FIELDS
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -50,3 +48,10 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ['title', 'description', 'priority']
+
+
+class BatchDeleteForm(serializers.Serializer):
+    items = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), many=True)
+
+    class Meta:
+        model = Item

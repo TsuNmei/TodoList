@@ -2,21 +2,23 @@ from rest_framework import generics, views, permissions, response, status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from api.models import UserProfile, Item, Category
-from api.serializers import *
+from api.serializers import RegisterSerializer, CatListSerializer, CatDetailserializer, ItemListSerializer, \
+    ItemDetailSerializer, BatchDeleteForm, ProfileSerializer
 from api import exceptions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from django.db.utils import IntegrityError
 
 
-# class ProfileListView(views.APIView):
-#     serializer_class = ProfileSerializer
-#     permissions_class = [permissions.IsAuthenticated]
-#
-#     def get(self, request):
-#         print(self.request.user)
-#         profile = self.request.user.profile
-#         serializers = self.serializer_class(profile, many=True)
-#         return response.Response(serializers.data, 200)
+class ProfileListView(views.APIView):
+    serializer_class = ProfileSerializer
+    permissions_class = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        print(self.request.user)
+        profile = self.request.user.profile
+        serializers = self.serializer_class(profile)
+        return response.Response(serializers.data, 200)
 
 
 class ItemListView(generics.ListCreateAPIView):
@@ -55,6 +57,24 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         return response.Response({'update success'}, 200)
 
 
+class ItemBatchDelete(views.APIView):
+    serializer_class = BatchDeleteForm
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        data = self.request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        items = serializer.validated_data['items']
+        for item in items:
+            if item.creator != self.request.user.profile:
+                raise exceptions.CantNotFound
+
+        for item in items:
+            item.delete()
+        return response.Response({}, 201)
+
+
 class CategoryListView(generics.ListCreateAPIView):
     serializer_class = CatListSerializer
     permissions_classes = [permissions.IsAuthenticated]
@@ -70,7 +90,7 @@ class CategoryListView(generics.ListCreateAPIView):
         creator = val_data.get('creator')
 
         if creator != self.request.user.profile:
-            raise exceptions.InvalidUser()
+            raise exceptions.InvalidUser
         instance = serializers.save(creator=self.request.user.profile)
         return response.Response(self.serializer_class(instance).data, 201)
 
@@ -98,7 +118,7 @@ class UserRegister(views.APIView):
             user = User.objects.create_user(username=val_data['account'], password=val_data['password'])
             profile = UserProfile.objects.create(user=user, name=val_data['username'])
         except:
-            raise exceptions.UserExist()
+            raise exceptions.UserExist
 
         return response.Response({'created success'}, 201)
 
@@ -116,7 +136,7 @@ class UserLogin(ObtainAuthToken):
             user = serializer.validated_data['user']
             creator = user.profile
         except:
-            raise exceptions.CantNotFound()
+            raise exceptions.CantNotFound
 
         token, created = Token.objects.get_or_create(user=user)
         return response.Response({'userid': creator.id, 'username': creator.name, 'token': token.key})
