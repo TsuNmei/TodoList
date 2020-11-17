@@ -8,18 +8,18 @@ class InvalidUser(APIError):
 
 
 class UserExist(APIError):
-    status = 400
+    status_code = 400
     code = 101
     detail = 'User already exist'
 
 
 class UserNotFoundError(APIError):
-    status = 404
+    status_code = 404
     code = 103
     detail = 'User Not Found'
 
 
 class CantNotFound(APIError):
-    status = 400
+    status_code = 400
     code = 104
     detail = 'Login Failed'
