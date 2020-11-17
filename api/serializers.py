@@ -3,6 +3,12 @@ from api.models import UserProfile, Category, Item
 from django.contrib.auth.admin import User
 
 
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    account = serializers.CharField()
+    password = serializers.CharField(required=True)
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -18,12 +24,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = serializers.ALL_FIELDS
-
-
-class RegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
-    account = serializers.CharField()
-    password = serializers.CharField(required=True)
 
 
 class CatListSerializer(serializers.ModelSerializer):

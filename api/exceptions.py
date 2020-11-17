@@ -15,11 +15,11 @@ class UserExist(APIError):
 
 class UserNotFoundError(APIError):
     status_code = 404
-    code = 103
+    code = 104
     detail = 'User Not Found'
 
 
 class CantNotFound(APIError):
     status_code = 400
-    code = 104
+    code = 105
     detail = 'Login Failed'
