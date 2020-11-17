@@ -29,7 +29,7 @@ class Category(models.Model):
     """
     creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=32)
-    color = models.CharfField(max_length=32)
+    color = models.CharField(max_length=32)
     # color = models.CharField(max_length=32, default='RED', choices=COLOR)
     
     def __str__(self):
