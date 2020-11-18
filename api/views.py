@@ -50,11 +50,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user.profile)
 
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
         serializer.save(creator=self.request.user.profile)
-
-    def update(self, request, *args, **kwargs):
-        return response.Response({'update success'}, 200)
 
 
 class ItemBatchDelete(views.APIView):
