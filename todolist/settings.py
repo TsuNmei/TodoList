@@ -24,7 +24,7 @@ SECRET_KEY = '70+^emky=r3ml!xbkw&&#a=_spln4lu0f(yzy90ib+rm53t%c1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://todolist.revtel2.com/']
+ALLOWED_HOSTS = ["https://todolist.revtel2.com"]
 
 # Application definition
 
