@@ -123,11 +123,11 @@ class UserRegister(views.APIView):
 class UserLogin(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        # data = {
-        #     'username':request.data.get('account'),
-        #     'password':request.data.get('password')
-        # }
-        serializer = self.get_serializer(data=request.data)
+        data = {
+             'username':request.data.get('account'),
+             'password':request.data.get('password')
+         }
+        serializer = self.get_serializer(data=data)
         try:
             serializer.is_valid(raise_exception=True)
             user = serializer.validated_data['user']
