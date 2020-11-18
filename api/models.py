@@ -38,6 +38,16 @@ class Item(models.Model):
         return f'<ID:{self.pk}> {self.title}'
 
 
+class ItemImage(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='images')
+    name = models.CharField(max_length=32)
+    image = models.ImageField(upload_to='items_img/')
+
+    def __str__(self):
+        return self.name
+
+
 admin.site.register(UserProfile)
 admin.site.register(Item)
+admin.site.register(ItemImage)
 admin.site.register(Category)

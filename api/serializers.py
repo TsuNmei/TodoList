@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import UserProfile, Category, Item
+from api.models import UserProfile, Category, Item, ItemImage
 from django.contrib.auth.admin import User
 
 
@@ -55,3 +55,9 @@ class BatchDeleteForm(serializers.Serializer):
 
     class Meta:
         model = Item
+
+
+class ItemImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemImage
+        fields = serializers.ALL_FIELDS
