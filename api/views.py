@@ -16,7 +16,7 @@ class ProfileListView(views.APIView):
     def get(self, request):
         print(self.request.user)
         profile = self.request.user.profile
-        serializers = self.serializer_class(profile)
+        serializer = self.serializer_class(profile)
         return response.Response(serializers.data, 200)
 
 
@@ -29,14 +29,14 @@ class ItemListView(generics.ListCreateAPIView):
         return self.queryset.filter(creator=self.request.user.profile)
 
     def create(self, request, *args, **kwargs):
-        serializers = self.serializer_class(data=request.data)
-        serializers.is_valid(raise_exception=True)
-        val_data = serializers.validated_data
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        val_data = serializer.validated_data
         creator = val_data.get('creator')
 
         if creator != self.request.user.profile:
             raise exceptions.InvalidUser()
-        instance = serializers.save(creator=self.request.user.profile)
+        instance = serializer.save(creator=self.request.user.profile)
         return response.Response(self.serializer_class(instance).data, 201)
 
 
@@ -80,14 +80,14 @@ class CategoryListView(generics.ListCreateAPIView):
         return self.queryset.filter(creator=self.request.user.profile)
 
     def create(self, request, *args, **kwargs):
-        serializers = self.serializer_class(data=request.data)
-        serializers.is_valid(raise_exception=True)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
         val_data = serializers.validated_data
         creator = val_data.get('creator')
 
         if creator != self.request.user.profile:
             raise exceptions.InvalidUser
-        instance = serializers.save(creator=self.request.user.profile)
+        instance = serializer.save(creator=self.request.user.profile)
         return response.Response(self.serializer_class(instance).data, 201)
 
 
