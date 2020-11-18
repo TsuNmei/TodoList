@@ -82,7 +82,7 @@ class CategoryListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        val_data = serializers.validated_data
+        val_data = serializer.validated_data
         creator = val_data.get('creator')
 
         if creator != self.request.user.profile:
@@ -139,14 +139,18 @@ class UserLogin(ObtainAuthToken):
 
 
 class ImageUploadView(views.APIView):
+    host = "https://todolist.revtel2.com"
     parser_class = (parsers.FileUploadParser,)
+    serializer_class = serializers.ItemImageSerializer
 
     def post(self, request, *args, **kwargs):
 
-        image_serializer = serializers.ItemImageSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
 
-        if image_serializer.is_valid():
-            image_serializer.save()
-            return response.Response(image_serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save()
+            data = serializer.data.copy()
+            data['image'] = self.host + data['image']
+            return response.Response(data, 201)
         else:
-            return response.Response(image_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response(serializer.errors, 400)

@@ -58,6 +58,8 @@ class BatchDeleteForm(serializers.Serializer):
 
 
 class ItemImageSerializer(serializers.ModelSerializer):
+    image = serializers.FileField()
+
     class Meta:
         model = ItemImage
         fields = serializers.ALL_FIELDS
