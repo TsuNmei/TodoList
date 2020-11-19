@@ -11,6 +11,7 @@ urlpatterns = [
     path('item/delete', views.ItemBatchDelete.as_view(), name='bulk_delete_items'),
     path('category/', views.CategoryListView.as_view(), name='get_categories'),
     path('category/<int:id>', views.CategoryDetailView.as_view(), name='update_categories'),
+    path('items/export_to_csv', views.ItemExportCsv.as_view(), name='export_items_csv'),
 
     path('user/register', views.UserRegister.as_view(), name='create_userprofile'),
     path('user/login', views.UserLogin.as_view(), name='auth_login'),

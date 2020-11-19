@@ -2,16 +2,17 @@ from rest_framework import generics, views, permissions, response, status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from api.models import UserProfile, Item, Category
-from api.serializers import RegisterSerializer, CatListSerializer, CatDetailserializer, ItemListSerializer, \
-    ItemDetailSerializer, BatchDeleteForm, ProfileSerializer
+from api import serializers
 from api import exceptions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.db.utils import IntegrityError
+from api.utils import export_to_csv
+from datetime import datetime
 
 
 class ProfileListView(views.APIView):
-    serializer_class = ProfileSerializer
+    serializer_class = serializers.ProfileSerializer
     permissions_class = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -22,7 +23,7 @@ class ProfileListView(views.APIView):
 
 
 class ItemListView(generics.ListCreateAPIView):
-    serializer_class = ItemListSerializer
+    serializer_class = serializers.ItemListSerializer
     permissions_classes = [permissions.IsAuthenticated]
     queryset = Item.objects.all()
 
@@ -42,7 +43,7 @@ class ItemListView(generics.ListCreateAPIView):
 
 
 class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ItemDetailSerializer
+    serializer_class = serializers.ItemDetailSerializer
     permissions_classes = [permissions.IsAuthenticated]
     queryset = Item.objects.all()
     lookup_field = 'id'
@@ -55,7 +56,7 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ItemBatchDelete(views.APIView):
-    serializer_class = BatchDeleteForm
+    serializer_class = serializers.BatchDeleteForm
     permissions_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -73,7 +74,7 @@ class ItemBatchDelete(views.APIView):
 
 
 class CategoryListView(generics.ListCreateAPIView):
-    serializer_class = CatListSerializer
+    serializer_class = serializers.CatListSerializer
     permissions_classes = [permissions.IsAuthenticated]
     queryset = Category.objects.all()
 
@@ -93,7 +94,7 @@ class CategoryListView(generics.ListCreateAPIView):
 
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CatDetailserializer
+    serializer_class = serializers.CatDetailserializer
     permissions_classes = [permissions.IsAuthenticated]
     queryset = Category.objects.all()
     lookup_field = 'id'
@@ -104,7 +105,7 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserRegister(views.APIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = RegisterSerializer
+    serializer_class = serializers.RegisterSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -124,9 +125,9 @@ class UserLogin(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         data = {
-             'username':request.data.get('account'),
-             'password':request.data.get('password')
-         }
+            'username': request.data.get('account'),
+            'password': request.data.get('password')
+        }
         serializer = self.get_serializer(data=data)
         try:
             serializer.is_valid(raise_exception=True)
@@ -137,3 +138,19 @@ class UserLogin(ObtainAuthToken):
 
         token, created = Token.objects.get_or_create(user=user)
         return response.Response({'userid': creator.id, 'username': creator.name, 'token': token.key})
+
+
+def get_user_items(creator):
+    queryset = Item.objects.filter(creator=creator)
+    fields = [field.name for field in Item.objects.model._meta.fields]
+    columns = [name.capitalize() for name in fields]
+    filename = 'items {}'.format(datetime.now().strftime('%Y%m%d'))
+    return queryset, fields, columns, filename
+
+
+class ItemExportCsv(views.APIView):
+
+    def get(self, request):
+        items = get_user_items(self.request.user.profile)
+        data = export_to_csv(queryset=items[0], fields=items[1], columns=items[2], filename=items[3])
+        return data
