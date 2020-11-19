@@ -38,6 +38,4 @@ class Item(models.Model):
         return f'<ID:{self.pk}> {self.title}'
 
 
-admin.site.register(UserProfile)
-admin.site.register(Item)
-admin.site.register(Category)
+

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
+    'import_export',
     'rest_framework',
     'rest_framework.authtoken',
     'redocs',
@@ -137,3 +138,6 @@ REVAUTH = {
     'DEFAULT_PROFILE_CLASS': 'api.models.UserProfile',
     'DEFAULT_HANDLER_CLASS': 'api.handlers.CustomHandler'
 }
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
