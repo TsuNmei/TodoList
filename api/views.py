@@ -122,6 +122,7 @@ class UserRegister(views.APIView):
 class UserLogin(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
+        
         data = {
             'username': request.data.get('account'),
             'password': request.data.get('password')
