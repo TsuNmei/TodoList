@@ -4,3 +4,4 @@ django-rest-framework-redocs
 revauth
 revcore
 Pillow==8.0
+django-import-export

@@ -46,8 +46,3 @@ class ItemImage(models.Model):
     def __str__(self):
         return self.name
 
-
-admin.site.register(UserProfile)
-admin.site.register(Item)
-admin.site.register(ItemImage)
-admin.site.register(Category)

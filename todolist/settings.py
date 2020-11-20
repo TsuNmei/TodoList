@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
-from pathlib import Path
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +29,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
+    'import_export',
     'rest_framework',
     'rest_framework.authtoken',
     'redocs',
@@ -153,3 +153,5 @@ MEDIA_URL = '/media/'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

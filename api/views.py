@@ -7,6 +7,8 @@ from api import exceptions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.db.utils import IntegrityError
+from api.utils import export_to_csv
+from datetime import datetime
 
 
 class ProfileListView(views.APIView):
@@ -14,10 +16,9 @@ class ProfileListView(views.APIView):
     permissions_class = [permissions.IsAuthenticated]
 
     def get(self, request):
-        print(self.request.user)
         profile = self.request.user.profile
         serializer = self.serializer_class(profile)
-        return response.Response(serializers.data, 200)
+        return response.Response(serializer.data, 200)
 
 
 class ItemListView(generics.ListCreateAPIView):
@@ -155,3 +156,17 @@ class ImageUploadView(views.APIView):
             return response.Response(data, 201)
         else:
             return response.Response(serializer.errors, 400)
+
+def get_user_items(creator):
+    extra = {}
+    extra['queryset'] = Item.objects.filter(creator=creator)
+    extra['fields'] = [field.name for field in Item.objects.model._meta.fields]     
+    extra['columns'] = [name.capitalize() for name in extra['fields']]
+    extra['filename'] = 'items {}'.format(datetime.now().strftime('%Y%m%d'))
+    return extra
+
+class ItemExportCsv(views.APIView):
+    def get(self, request):
+        items = get_user_items(self.request.user.profile)
+        data = export_to_csv(**items)
+        return data
