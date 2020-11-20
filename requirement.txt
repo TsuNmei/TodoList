@@ -1,7 +1,12 @@
-django
+Django
 djangorestframework
 django-rest-framework-redocs
 revauth
 revcore
-Pillow==8.0
 django-import-export
+Pillow
+requests
+pytz
+six
+Datetime
+django-cors-headers
