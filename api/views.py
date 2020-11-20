@@ -141,16 +141,17 @@ class UserLogin(ObtainAuthToken):
 
 
 def get_user_items(creator):
-    queryset = Item.objects.filter(creator=creator)
-    fields = [field.name for field in Item.objects.model._meta.fields]
-    columns = [name.capitalize() for name in fields]
-    filename = 'items {}'.format(datetime.now().strftime('%Y%m%d'))
-    return queryset, fields, columns, filename
+    extra = {}
+    extra['queryset'] = Item.objects.filter(creator=creator)
+    extra['fields'] = [field.name for field in Item.objects.model._meta.fields]
+    extra['columns'] = [name.capitalize() for name in extra['fields']]
+    extra['filename'] = 'items {}'.format(datetime.now().strftime('%Y%m%d'))
+    return extra
 
 
 class ItemExportCsv(views.APIView):
 
     def get(self, request):
         items = get_user_items(self.request.user.profile)
-        data = export_to_csv(queryset=items[0], fields=items[1], columns=items[2], filename=items[3])
+        data = export_to_csv(**items)
         return data

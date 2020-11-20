@@ -3,3 +3,5 @@ djangorestframework
 django-rest-framework-redocs
 revauth
 revcore
+django-import-export-csv
+

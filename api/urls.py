@@ -6,10 +6,10 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
-    path('item/', views.ItemListView.as_view(), name='get_items'),
+    path('item', views.ItemListView.as_view(), name='get_items'),
     path('item/<int:id>', views.ItemDetailView.as_view(), name='update_items'),
     path('item/delete', views.ItemBatchDelete.as_view(), name='bulk_delete_items'),
-    path('category/', views.CategoryListView.as_view(), name='get_categories'),
+    path('category', views.CategoryListView.as_view(), name='get_categories'),
     path('category/<int:id>', views.CategoryDetailView.as_view(), name='update_categories'),
     path('items/export_to_csv', views.ItemExportCsv.as_view(), name='export_items_csv'),
 
