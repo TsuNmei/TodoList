@@ -12,13 +12,28 @@ from datetime import datetime
 
 
 class ProfileListView(views.APIView):
+    host = "https://todolist.revtel2.com"
+    parser_class = (parsers.FileUploadParser,)
     serializer_class = serializers.ProfileSerializer
     permissions_class = [permissions.IsAuthenticated]
 
     def get(self, request):
         profile = self.request.user.profile
         serializer = self.serializer_class(profile)
-        return response.Response(serializer.data, 200)
+        data = serializer.data.copy()
+        data['image'] = self.host + data['image']
+        return response.Response(data, 200)
+
+
+class ProfileDetailView(generics.RetrieveUpdateAPIView):
+    parser_class = (parsers.FileUploadParser,)
+    serializer_class = serializers.ProfileDetailSerializer
+    permissions_class = [permissions.IsAuthenticated]
+    queryset = UserProfile.objects.all()
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 
 
 class ItemListView(generics.ListCreateAPIView):
@@ -123,7 +138,7 @@ class UserRegister(views.APIView):
 class UserLogin(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        
+
         data = {
             'username': request.data.get('account'),
             'password': request.data.get('password')
@@ -157,13 +172,15 @@ class ImageUploadView(views.APIView):
         else:
             return response.Response(serializer.errors, 400)
 
+
 def get_user_items(creator):
     extra = {}
     extra['queryset'] = Item.objects.filter(creator=creator)
-    extra['fields'] = [field.name for field in Item.objects.model._meta.fields]     
+    extra['fields'] = [field.name for field in Item.objects.model._meta.fields]
     extra['columns'] = [name.capitalize() for name in extra['fields']]
     extra['filename'] = 'items {}'.format(datetime.now().strftime('%Y%m%d'))
     return extra
+
 
 class ItemExportCsv(views.APIView):
     def get(self, request):
