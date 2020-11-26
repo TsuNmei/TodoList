@@ -16,7 +16,6 @@ urlpatterns = [
 
     path('user/register', views.UserRegister.as_view(), name='create_userprofile'),
     path('user/login', views.UserLogin.as_view(), name='auth_login'),
-    # path('user/profile', views.ProfileListView.as_view(), name='get_profile'),
     path('user/profile/<int:id>', views.ProfileDetailView.as_view(), name='update_profile'),
     path('user/token', obtain_auth_token, name='api_token_auth'),
 ]

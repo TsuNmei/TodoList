@@ -6,7 +6,7 @@ from django.contrib import admin
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=32)
-    image = models.ImageField(upload_to='avatar/',  null=True, blank=True)
+    image = models.ImageField(upload_to='avatar/', null=True, blank=True)
 
     def __str__(self):
         return f'<{self.user}> {self.name}'

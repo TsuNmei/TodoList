@@ -20,17 +20,13 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    image = serializers.FileField()
-    class Meta:
-        model = UserProfile
-        fields = serializers.ALL_FIELDS
-
 class ProfileDetailSerializer(serializers.ModelSerializer):
     image = serializers.FileField()
+
     class Meta:
         model = UserProfile
         exclude = ['user']
+
 
 class CatListSerializer(serializers.ModelSerializer):
     class Meta:

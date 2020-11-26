@@ -11,20 +11,6 @@ from api.utils import export_to_csv
 from datetime import datetime
 
 
-class ProfileListView(views.APIView):
-    host = "https://todolist.revtel2.com"
-    parser_class = (parsers.FileUploadParser,)
-    serializer_class = serializers.ProfileSerializer
-    permissions_class = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        profile = self.request.user.profile
-        serializer = self.serializer_class(profile)
-        data = serializer.data.copy()
-        data['image'] = self.host + data['image']
-        return response.Response(data, 200)
-
-
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     parser_class = (parsers.FileUploadParser,)
     serializer_class = serializers.ProfileDetailSerializer
@@ -161,7 +147,6 @@ class ImageUploadView(views.APIView):
     serializer_class = serializers.ItemImageSerializer
 
     def post(self, request, *args, **kwargs):
-
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
